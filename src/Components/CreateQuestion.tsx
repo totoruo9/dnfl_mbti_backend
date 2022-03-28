@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import {useForm, SubmitHandler} from "react-hook-form";
 import React from "react";
+import AnswerComponent from "./AnswerComponent";
+import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { createdItem, ICreatedItem } from "../atoms";
 
 const Wrapper = styled.div`
     width: 380px;
@@ -27,33 +31,6 @@ const QuestionForm = styled.input`
     padding: ${props => props.theme.paddingSet.pd_8};
     text-align: center;
     margin-bottom: ${props => props.theme.paddingSet.pd_20};
-`;
-
-const AnswerComponent = styled.div`
-    width: 100%;
-    background: ${props => props.theme.colorSet.blackWhite.gray300};
-    height: ${props => props.theme.boxSet.height.md};
-    margin-bottom: ${props => props.theme.paddingSet.pd_8};
-    display: flex;
-    border-radius: ${props => props.theme.boxSet.borderRadius};
-`;
-
-const AnswerValue = styled.input`
-    width: 85%;
-    border: 0;
-    background: rgba(0,0,0,0);
-    color: ${props => props.theme.colorSet.blackWhite.gray900};
-    padding: ${props => props.theme.paddingSet.pd_4} ${props => props.theme.paddingSet.pd_12};
-
-    &::placeholder {
-        color: ${props => props.theme.colorSet.blackWhite.gray500};
-    }
-`;
-
-const AnswerResult = styled.select`
-    width: 15%;
-    border: 2px solid ${props => props.theme.colorSet.blackWhite.gray300};
-    border-radius: ${props => props.theme.boxSet.borderRadius};
 `;
 
 const MoreItem = styled.div`
@@ -94,52 +71,60 @@ const ButtonWrap = styled.div`
 `;
 
 interface IFormValue {
-
+    question: string;
+    [key:string]: string;
 }
 
-
+interface IAnserData {
+    result: string;
+    value: string;
+    id?: string;
+}
 
 function CreateQuestion () {
-    const {register, handleSubmit, resetField} = useForm();
+    const {register, handleSubmit, resetField, reset} = useForm();
+    const [answerId, setAnserId] = useState(["id_1", "id_2"]);
+    const [createdAnswer, setCreatedAnswer] = useRecoilState(createdItem);
 
-    const onSubmit:SubmitHandler<IFormValue> = (event) => {
-        console.log(event);
-        resetField("question");
-        resetField("first");
-        resetField("second");
-        resetField("third");
+    const onSubmit:SubmitHandler<ICreatedItem> = (event) => {
+        const cloneObj = (obj:{}) => JSON.parse(JSON.stringify(obj));
+        const copied = cloneObj(event);
+
+        const filedId = `${Date.now()}id`;
+        copied.id = filedId;
+
+        const answerArray = [];
+        for(const prop in event.answer) {
+            const answerData:any = event.answer[prop];
+            answerData.id = prop;
+            answerArray.push(answerData);
+        };
+        copied.answer = answerArray;
+
+        copied.modify = false;
+
+        setCreatedAnswer(prev => [...prev, copied]);
+        reset();
     }
+
+    const onAddAnswer = () => {
+        setAnserId(prev => [...prev, `id_${prev.length+1}`])
+    }
+    
+    console.log(createdAnswer);
 
     return(
         <Wrapper onSubmit={handleSubmit(onSubmit)}>
             <FormWrap>
                 <QuestionForm {...register("question")} placeholder="질문을 입력해주세요." />
-                <AnswerComponent>
-                    <AnswerValue {...register("first")} placeholder="답변을 입력해주세요" />
-                    <AnswerResult>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </AnswerResult>
-                </AnswerComponent>
-                <AnswerComponent>
-                    <AnswerValue {...register("second")} placeholder="답변을 입력해주세요" />
-                    <AnswerResult>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </AnswerResult>
-                </AnswerComponent>
-                <AnswerComponent>
-                    <AnswerValue {...register("third")} placeholder="답변을 입력해주세요" />
-                    <AnswerResult>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </AnswerResult>
-                </AnswerComponent>
 
-                <MoreItem>More +</MoreItem>
+                {
+                    answerId.map((item, index) => (
+                        <AnswerComponent key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." />
+                    ))
+                }
+
+                <MoreItem onClick={onAddAnswer}>More +</MoreItem>
 
                 <ButtonWrap>
                     <button>다시 입력하기</button>

@@ -1,9 +1,10 @@
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import DropBoard from "./Components/DropBoard";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import { questionItem } from "./atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { createdItem, questionItem } from "./atoms";
 import CreateQuestion from "./Components/CreateQuestion";
+import CreatedQuestion from "./Components/CreatedQuestion";
 
 const Wrapper = styled.div`
     width:100%;
@@ -34,16 +35,25 @@ const MoreItem = styled.div`
   }
 `;
 
+interface ICreatedQ {
+  key: string;
+  question: string;
+  answer: {
+    [key:string]: {
+      value: string;
+      result: string;
+    };
+  }
+}
+
 function App() {
   const [questionWrap, setQuestionWrap] = useRecoilState(questionItem);
-  const onDragEnd = () => {
-
-  }
+  const createdAnswer = useRecoilValue(createdItem);
 
   const onAddBoard = () => {
     const createData = {
       id: `${questionWrap.length+1}ID${Date.now()}`,
-      value: <CreateQuestion />
+      value: <CreateQuestion key={`${questionWrap.length+1}ID${Date.now()}`} />
     }
 
     console.log(createData);
@@ -54,9 +64,13 @@ function App() {
 
   return (
     <Wrapper>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <DropBoard />
-      </DragDropContext>
+      {
+        createdAnswer.map((item:any) => (
+          item.modif
+            ? <CreateQuestion />
+            : <CreatedQuestion key={item.id} question={item.question} answer={item.answer} modify={item.modify} boardId={item.id} />
+        ))
+      }
       <CreateQuestion />
       {
         questionWrap.map(item => {
