@@ -1,7 +1,7 @@
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { createdItem, ICreatedItem, questionItem } from "../atoms";
+import { createdItem, ICreatedItem, questionItem, questionItemSelector } from "../atoms";
 import DropItem from "./DropItem";
 
 const Wrapper = styled.div`
@@ -29,7 +29,6 @@ const Title = styled.h3`
 `;
 
 interface ICreatedQ {
-    key: string;
     question: string;
     answer: {
         [key:string]: {
@@ -40,16 +39,11 @@ interface ICreatedQ {
 }
 
 function CreatedQuestion ({question, answer, boardId}:any) {
-    const [createdQuestion, setCreatedQuestion] = useRecoilState(createdItem);
+    const setCreatedQuestion = useSetRecoilState(questionItemSelector);
 
-    const onModify = () => {
+    const onModify = (event: any) => {
         setCreatedQuestion(prev => {
-            return prev.map((item:any) => {
-                if(item.id === boardId) {
-                    item.modify = true
-                };
-                return item;
-            })
+            return boardId;
         })
     }
 

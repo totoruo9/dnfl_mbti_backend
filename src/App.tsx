@@ -2,7 +2,7 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import DropBoard from "./Components/DropBoard";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { createdItem, questionItem } from "./atoms";
+import { createdItem, ICreatedItem, questionItem, questionItemSelector } from "./atoms";
 import CreateQuestion from "./Components/CreateQuestion";
 import CreatedQuestion from "./Components/CreatedQuestion";
 
@@ -48,7 +48,7 @@ interface ICreatedQ {
 
 function App() {
   const [questionWrap, setQuestionWrap] = useRecoilState(questionItem);
-  const createdAnswer = useRecoilValue(createdItem);
+  const createdAnswer = useRecoilValue(questionItemSelector);
 
   const onAddBoard = () => {
     const createData = {
@@ -65,11 +65,11 @@ function App() {
   return (
     <Wrapper>
       {
-        createdAnswer.map((item:any) => (
-          item.modif
+        createdAnswer.map((item) => {console.log(item.id); return (
+          item.modify
             ? <CreateQuestion />
             : <CreatedQuestion key={item.id} question={item.question} answer={item.answer} modify={item.modify} boardId={item.id} />
-        ))
+        )})
       }
       <CreateQuestion />
       {

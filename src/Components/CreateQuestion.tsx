@@ -87,31 +87,13 @@ function CreateQuestion () {
     const [createdAnswer, setCreatedAnswer] = useRecoilState(createdItem);
 
     const onSubmit:SubmitHandler<ICreatedItem> = (event) => {
-        const cloneObj = (obj:{}) => JSON.parse(JSON.stringify(obj));
-        const copied = cloneObj(event);
-
-        const filedId = `${Date.now()}id`;
-        copied.id = filedId;
-
-        const answerArray = [];
-        for(const prop in event.answer) {
-            const answerData:any = event.answer[prop];
-            answerData.id = prop;
-            answerArray.push(answerData);
-        };
-        copied.answer = answerArray;
-
-        copied.modify = false;
-
-        setCreatedAnswer(prev => [...prev, copied]);
+        setCreatedAnswer(prev => [...prev, event]);
         reset();
     }
 
     const onAddAnswer = () => {
         setAnserId(prev => [...prev, `id_${prev.length+1}`])
     }
-    
-    console.log(createdAnswer);
 
     return(
         <Wrapper onSubmit={handleSubmit(onSubmit)}>
