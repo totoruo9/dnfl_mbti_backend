@@ -47,7 +47,7 @@ function AnswerComponent({qustionName, placeholder, register, modify, value=[]}:
 
     return (
         <Wrapper>
-            <AnswerValue {...register(`answer.${qustionName}.value`, {value: getValue?.value})} placeholder={placeholder} />
+            <AnswerValue {...register(`answer.${qustionName}.value`, {value: getValue?.value, register: "답변을 입력해주세요!"})} placeholder={placeholder} />
             <AnswerResult {...register(`answer.${qustionName}.result`, {value: getValue?.result})}>
                 <option value="1">1</option>
                 <option value="2">2</option>

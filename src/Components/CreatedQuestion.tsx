@@ -28,16 +28,6 @@ const Title = styled.h3`
     font-weight: ${props => props.theme.textSet.weight.extra_bold};
 `;
 
-interface ICreatedQ {
-    question: string;
-    answer: {
-        [key:string]: {
-            value: string;
-            result: string;
-        };
-    }
-}
-
 function CreatedQuestion ({question, answer, boardId}:any) {
     const setCreatedQuestion = useSetRecoilState(questionItemSelector);
 

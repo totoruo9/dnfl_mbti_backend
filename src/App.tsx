@@ -66,12 +66,12 @@ function App() {
           return item.value
         })
       }
-      <MoreItem onClick={onAddBoard}>
+      {/* <MoreItem onClick={onAddBoard}>
         <span>
           +<br />
           More Item
         </span>
-      </MoreItem>
+      </MoreItem> */}
     </Wrapper>
   );
 }

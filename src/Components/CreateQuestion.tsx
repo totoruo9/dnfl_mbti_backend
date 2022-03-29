@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {useForm, SubmitHandler} from "react-hook-form";
-import React from "react";
+import React, { ReactEventHandler } from "react";
 import AnswerComponent from "./AnswerComponent";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
@@ -117,16 +117,41 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
 
         setCreatedAnswer(prev => [...prev, copied]);
         reset();
-    }
+    };
 
     const onAddAnswer = () => {
         setAnserId(prev => [...prev, `id_${prev.length+1}`])
+    };
+
+    const onResetBtn = (event:React.FormEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        console.log("RESET!!");
+
+        let findItemIndex = 0;
+        const findItem = createdAnswer.find((item, index) => {
+            findItemIndex = index;
+            return item.id === boardId;
+        });
+
+        const changeModify:any = {
+            ...findItem,
+            answer: [],
+            question: "",
+        };
+
+        const copyedArray = [...createdAnswer];
+        copyedArray.splice(findItemIndex, 1);
+        copyedArray.splice(findItemIndex, 0, changeModify);
+
+        setCreatedAnswer(copyedArray);
+
+        reset();
     }
 
     return(
         <Wrapper onSubmit={handleSubmit(onSubmit)}>
             <FormWrap>
-                <QuestionForm {...register("question", {value: question})} placeholder="질문을 입력해주세요." />
+                <QuestionForm {...register("question", {value: question, required: "질문을 입력해주세요!"})} placeholder="질문을 입력해주세요." />
 
                 {
                     answerId.map((item, index) => (
@@ -137,7 +162,7 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
                 <MoreItem onClick={onAddAnswer}>More +</MoreItem>
 
                 <ButtonWrap>
-                    <button>다시 입력하기</button>
+                    <button onClick={onResetBtn}>다시 입력하기</button>
                     <button>등록</button>
                 </ButtonWrap>
             </FormWrap>
