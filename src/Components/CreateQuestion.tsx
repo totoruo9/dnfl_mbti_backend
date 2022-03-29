@@ -70,24 +70,52 @@ const ButtonWrap = styled.div`
     }
 `;
 
-interface IFormValue {
-    question: string;
-    [key:string]: string;
-}
-
-interface IAnserData {
-    result: string;
-    value: string;
-    id?: string;
-}
-
-function CreateQuestion () {
-    const {register, handleSubmit, resetField, reset} = useForm();
+function CreateQuestion ({question="", answer, boardId=""}:any) {
+    const {register, handleSubmit, reset} = useForm();
     const [answerId, setAnserId] = useState(["id_1", "id_2"]);
     const [createdAnswer, setCreatedAnswer] = useRecoilState(createdItem);
 
     const onSubmit:SubmitHandler<ICreatedItem> = (event) => {
-        setCreatedAnswer(prev => [...prev, event]);
+        const cloneObj = (obj:{}) => JSON.parse(JSON.stringify(obj));
+        const copied = cloneObj(event);
+
+        const filedId = `${Date.now()}id`;
+        copied.id = filedId;
+
+        const answerArray = [];
+        for(const prop in event.answer) {
+            const answerData = cloneObj(event.answer[prop]);
+            answerData.id = prop;
+            answerArray.push(answerData);
+        };
+        copied.answer = answerArray;
+
+        copied.modify = false;
+
+        
+        /* 이미 생성된 게시판의 경우 db를 추가하는 것이 아닌 수정할 수 있게 설정 */
+        if(boardId) {
+            let findItemIndex = 0;
+            const findItem = createdAnswer.find((item, index) => {
+                findItemIndex = index;
+                return item.id === boardId;
+            });
+
+            const changeModify:any = {
+                ...findItem,
+                modify: false,
+                answer: answerArray,
+                question: event.question
+            };
+
+            const copyedArray = [...createdAnswer];
+            copyedArray.splice(findItemIndex, 1);
+            copyedArray.splice(findItemIndex, 0, changeModify);
+
+            return setCreatedAnswer(copyedArray);
+        }
+
+        setCreatedAnswer(prev => [...prev, copied]);
         reset();
     }
 
@@ -98,11 +126,11 @@ function CreateQuestion () {
     return(
         <Wrapper onSubmit={handleSubmit(onSubmit)}>
             <FormWrap>
-                <QuestionForm {...register("question")} placeholder="질문을 입력해주세요." />
+                <QuestionForm {...register("question", {value: question})} placeholder="질문을 입력해주세요." />
 
                 {
                     answerId.map((item, index) => (
-                        <AnswerComponent key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." />
+                        <AnswerComponent key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." value={answer} />
                     ))
                 }
 

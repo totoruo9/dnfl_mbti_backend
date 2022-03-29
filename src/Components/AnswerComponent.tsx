@@ -32,13 +32,23 @@ interface IAnserComponent {
     placeholder: string;
     register: any;
     modify?: boolean;
+    value: {
+        id: string,
+        result: string,
+        value: string
+    }[]
 }
 
-function AnswerComponent({qustionName, placeholder, register, modify}:IAnserComponent){
+function AnswerComponent({qustionName, placeholder, register, modify, value=[]}:IAnserComponent){
+    let getValue;
+    if(value.length !== 0) {
+        getValue = value.find(item => item.id === qustionName)
+    }
+
     return (
         <Wrapper>
-            <AnswerValue {...register(`answer.${qustionName}.value`)} placeholder={placeholder} />
-            <AnswerResult {...register(`answer.${qustionName}.result`)}>
+            <AnswerValue {...register(`answer.${qustionName}.value`, {value: getValue?.value})} placeholder={placeholder} />
+            <AnswerResult {...register(`answer.${qustionName}.result`, {value: getValue?.result})}>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

@@ -41,8 +41,8 @@ interface ICreatedQ {
 function CreatedQuestion ({question, answer, boardId}:any) {
     const setCreatedQuestion = useSetRecoilState(questionItemSelector);
 
-    const onModify = (event: any) => {
-        setCreatedQuestion(prev => {
+    const onModify = () => {
+        setCreatedQuestion((prev): any => {
             return boardId;
         })
     }

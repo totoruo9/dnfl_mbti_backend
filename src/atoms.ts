@@ -1,14 +1,25 @@
-import React, { DetailedReactHTMLElement } from "react";
-import {atom, GetRecoilValue, RecoilState, ResetRecoilState, selector, SetRecoilState} from "recoil";
-import { createImportSpecifier } from "typescript";
+import React from "react";
+import {atom, selector} from "recoil";
 
 interface IQuestionItem {
     id?: string;
     value?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 }
 
+interface IQustionData {
+    answer: {
+        [key: string]: {
+            value: string;
+            result: string;
+            id?: string;
+        }
+    };
+    question: string;
+    modify?:boolean;
+    id?: string;
+}
 export interface ICreatedItem {
-    [key:string]: [string, {value:string, result:string, id?:string}];
+    [key:string]: [string, {value:string, result:string, id?:string, modify?: boolean}];
 }
 
 export const atomItem = atom({
@@ -26,18 +37,7 @@ export const createdItem = atom<ICreatedItem[]>({
     default: []
 })
 
-interface IQustionData {
-    answer: {
-        [key: string]: {
-            value: string;
-            result: string;
-            id?: string;
-        }
-    };
-    question: string;
-    modify?:boolean;
-    id?: string;
-}
+
 
 export const questionItemSelector = selector<IQustionData[]>({
     key: "questionItemSelector",
@@ -47,9 +47,6 @@ export const questionItemSelector = selector<IQustionData[]>({
         const tet = list.map((item) => {
             const cloneObj = (obj:{}) => JSON.parse(JSON.stringify(obj));
             const copied = cloneObj(item);
-
-            const filedId = `${Date.now()}id`;
-            copied.id = filedId;
 
             const answerArray = [];
             for(const prop in item.answer) {
@@ -64,14 +61,23 @@ export const questionItemSelector = selector<IQustionData[]>({
             return copied;
         })
 
-        console.log(tet);
-
         return tet;
     },
-    set: ({set}, newValue) => set(createdItem, (test) => {
-        console.log("setter!!");
-        console.log(newValue);
-        console.log(test);
-        return test;
-    }),
+    set: ({set}, newValue: any) => {
+        set(createdItem, (prev):any => {
+            let findItemIndex = 0;
+            const findItem = prev.find((item, index) => {
+                findItemIndex = index;
+                return item.id === newValue
+            });
+
+            const changeModify:any = {...findItem, modify: true};
+
+            const copyedArray = [...prev];
+            copyedArray.splice(findItemIndex, 1);
+            copyedArray.splice(findItemIndex, 0, changeModify);
+
+            return copyedArray;
+        })
+    },
 })

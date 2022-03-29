@@ -35,20 +35,9 @@ const MoreItem = styled.div`
   }
 `;
 
-interface ICreatedQ {
-  key: string;
-  question: string;
-  answer: {
-    [key:string]: {
-      value: string;
-      result: string;
-    };
-  }
-}
-
 function App() {
   const [questionWrap, setQuestionWrap] = useRecoilState(questionItem);
-  const createdAnswer = useRecoilValue(questionItemSelector);
+  const createdAnswer = useRecoilValue(createdItem);
 
   const onAddBoard = () => {
     const createData = {
@@ -65,11 +54,11 @@ function App() {
   return (
     <Wrapper>
       {
-        createdAnswer.map((item) => {console.log(item.id); return (
+        createdAnswer.map((item) => (
           item.modify
-            ? <CreateQuestion />
+            ? <CreateQuestion key={item.id}  question={item.question} answer={item.answer} modify={item.modify} boardId={item.id} />
             : <CreatedQuestion key={item.id} question={item.question} answer={item.answer} modify={item.modify} boardId={item.id} />
-        )})
+        ))
       }
       <CreateQuestion />
       {
