@@ -31,19 +31,21 @@ const Title = styled.h3`
 
 const SAnswerWrap = styled.div`
     border: 1px solid ${props => props.theme.colorSet.blackWhite.gray300};
-    height: ${props => props.theme.boxSet.height.md};
+    line-height: ${props => props.theme.boxSet.height.sm};
     border-radius: ${props => props.theme.boxSet.borderRadius};
     margin-bottom: ${props => props.theme.paddingSet.pd_8};
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: ${props => props.theme.paddingSet.pd_4} ${props => props.theme.paddingSet.pd_12};
 
     strong {
         display: inline-block;
         background: ${props => props.theme.colorSet.blackWhite.gray700};
         color: ${props => props.theme.colorSet.blackWhite.white};
-        padding: ${props => props.theme.paddingSet.pd_4} ${props => props.theme.paddingSet.pd_8};
+        padding: 0 ${props => props.theme.paddingSet.pd_12};
         border-radius: ${props => props.theme.boxSet.borderRadius};
+        margin-left: ${props => props.theme.paddingSet.pd_8}
     }
 `;
 
