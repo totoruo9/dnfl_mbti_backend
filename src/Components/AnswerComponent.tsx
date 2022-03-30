@@ -83,8 +83,6 @@ function AnswerComponent({boardId, qustionName, placeholder, register, value=[],
             return copiedArray.indexOf(item.id) !== -1;
         });
 
-        console.log(answerArray);
-
         if(boardId !== ""){
             await atomModify({
                 boardId: boardId,

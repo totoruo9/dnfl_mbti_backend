@@ -53,7 +53,6 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
 
     useEffect(() => {
         if(boardId !== "") {
-            console.log(createdAnswer);
             const findItem = createdAnswer.find((item, index) => {
                 return item.id === boardId;
             });
@@ -62,7 +61,6 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
                 return item.id;
             });
     
-            console.log(itemId);
             setAnswerId((prev:any):any => prev = itemId);
         };
     }, []);
@@ -116,9 +114,9 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
                 <QuestionForm {...register("question", {value: question, required: "질문을 입력해주세요!"})} placeholder="질문을 입력해주세요." />
 
                 {
-                    answerId.map((item, index) => { console.log(item); return (
+                    answerId.map((item, index) =>(
                         <AnswerComponent boardId={boardId} key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." value={answer} index={index} setAnswerId={setAnswerId} resetField={resetField} />
-                    )})
+                    ))
                 }
 
                 <MoreItem onClick={onAddAnswer}>More +</MoreItem>

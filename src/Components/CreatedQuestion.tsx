@@ -47,6 +47,14 @@ const SAnswerWrap = styled.div`
     }
 `;
 
+const BtnWrapper = styled.div`
+    display: flex;
+    margin-top: ${props => props.theme.paddingSet.pd_20};
+    align-items: center;
+    justify-content: center;
+
+`;
+
 const ModifyBtn = styled.button`
     background: ${props => props.theme.colorSet.point};
     height: ${props => props.theme.boxSet.height.lg};
@@ -54,9 +62,21 @@ const ModifyBtn = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: calc(100% - ${props => props.theme.boxSet.height.lg} - ${props => props.theme.paddingSet.pd_8});
     border: 0;
-    margin-top: ${props => props.theme.paddingSet.pd_20};
+    cursor: pointer;
+`;
+
+const DeleteBtn = styled.div`
+    width: ${props => props.theme.boxSet.height.lg};
+    height: ${props => props.theme.boxSet.height.lg};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid ${props => props.theme.colorSet.main};
+    margin-left: ${props => props.theme.paddingSet.pd_8};
+    border-radius: ${props => props.theme.boxSet.borderRadius};
+    cursor: pointer;
 `;
 
 interface ICreatedQuestion {
@@ -81,6 +101,11 @@ function CreatedQuestion ({question, answer, boardId}:any) {
         });
     }
 
+    const onDeleteBoard = () => {
+        const findItem = createdQuestion.filter(item => item.id !== boardId);
+        setCreatedQuestion(findItem);
+    }
+
     return (
         <Wrapper>
             <Board>
@@ -94,7 +119,10 @@ function CreatedQuestion ({question, answer, boardId}:any) {
                         )
                     })
                 }
-                <ModifyBtn onClick={onModify}>수정하기</ModifyBtn>
+                <BtnWrapper>
+                    <ModifyBtn onClick={onModify}>수정하기</ModifyBtn>
+                    <DeleteBtn onClick={onDeleteBoard}>❌</DeleteBtn>
+                </BtnWrapper>
             </Board>
         </Wrapper>
     );
