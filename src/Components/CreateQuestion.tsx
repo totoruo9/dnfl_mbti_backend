@@ -1,10 +1,12 @@
 import styled from "styled-components";
 import {useForm, SubmitHandler} from "react-hook-form";
-import React, { ReactEventHandler } from "react";
 import AnswerComponent from "./AnswerComponent";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { createdItem, ICreatedItem } from "../atoms";
+import { useEffect } from "react";
+import ButtonWrap from "./ButtonWrap";
+import atomModify from "../hooks/atomModify";
 
 const Wrapper = styled.div`
     width: 380px;
@@ -44,36 +46,27 @@ const MoreItem = styled.div`
     border-radius: ${props => props.theme.boxSet.borderRadius};
 `;
 
-const ButtonWrap = styled.div`
-    display: flex;
-    height: ${props => props.theme.boxSet.height.lg};
-    margin-top: ${props => props.theme.paddingSet.pd_20};
-    
-    button {
-        width: 50%;
-        border: 0;
-        background: ${props => props.theme.colorSet.blackWhite.gray700};
-        color: ${props => props.theme.colorSet.blackWhite.white};
-
-        &:first-child {
-            background: ${props => props.theme.colorSet.blackWhite.white};
-            border: 1px solid ${props => props.theme.colorSet.blackWhite.gray500};
-            color: ${props => props.theme.colorSet.blackWhite.gray500};
-            font-weight: ${props => props.theme.textSet.weight.regular};
-            margin-right: 2px;
-        }
-
-        &:last-child {
-            background: ${props => props.theme.colorSet.main};
-            margin-left: 2px;
-        }
-    }
-`;
-
 function CreateQuestion ({question="", answer, boardId=""}:any) {
-    const {register, handleSubmit, reset} = useForm();
-    const [answerId, setAnserId] = useState(["id_1", "id_2"]);
+    const {register, handleSubmit, reset, resetField} = useForm();
+    const [answerId, setAnswerId] = useState(["id_1", "id_2"]);
     const [createdAnswer, setCreatedAnswer] = useRecoilState(createdItem);
+
+    useEffect(() => {
+        if(boardId !== "") {
+            console.log(createdAnswer);
+            const findItem = createdAnswer.find((item, index) => {
+                return item.id === boardId;
+            });
+    
+            const itemId = findItem?.answer.map((item) => {
+                return item.id;
+            });
+    
+            console.log(itemId);
+            setAnswerId((prev:any):any => prev = itemId);
+        };
+    }, []);
+    
 
     const onSubmit:SubmitHandler<ICreatedItem> = (event) => {
         const cloneObj = (obj:{}) => JSON.parse(JSON.stringify(obj));
@@ -85,8 +78,10 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
         const answerArray = [];
         for(const prop in event.answer) {
             const answerData = cloneObj(event.answer[prop]);
-            answerData.id = prop;
-            answerArray.push(answerData);
+            if(answerData.value && answerData.result){
+                answerData.id = prop;
+                answerArray.push(answerData);
+            };
         };
         copied.answer = answerArray;
 
@@ -95,24 +90,15 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
         
         /* 이미 생성된 게시판의 경우 db를 추가하는 것이 아닌 수정할 수 있게 설정 */
         if(boardId) {
-            let findItemIndex = 0;
-            const findItem = createdAnswer.find((item, index) => {
-                findItemIndex = index;
-                return item.id === boardId;
+            atomModify({
+                atom: createdAnswer,
+                setAtom: setCreatedAnswer,
+                boardId,
+                answerArray,
+                inputValue: event,
+                modify: false
             });
-
-            const changeModify:any = {
-                ...findItem,
-                modify: false,
-                answer: answerArray,
-                question: event.question
-            };
-
-            const copyedArray = [...createdAnswer];
-            copyedArray.splice(findItemIndex, 1);
-            copyedArray.splice(findItemIndex, 0, changeModify);
-
-            return setCreatedAnswer(copyedArray);
+            return ;
         }
 
         setCreatedAnswer(prev => [...prev, copied]);
@@ -120,33 +106,8 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
     };
 
     const onAddAnswer = () => {
-        setAnserId(prev => [...prev, `id_${prev.length+1}`])
+        setAnswerId(prev => [...prev, `id_${prev.length+1}`])
     };
-
-    const onResetBtn = (event:React.FormEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        console.log("RESET!!");
-
-        let findItemIndex = 0;
-        const findItem = createdAnswer.find((item, index) => {
-            findItemIndex = index;
-            return item.id === boardId;
-        });
-
-        const changeModify:any = {
-            ...findItem,
-            answer: [],
-            question: "",
-        };
-
-        const copyedArray = [...createdAnswer];
-        copyedArray.splice(findItemIndex, 1);
-        copyedArray.splice(findItemIndex, 0, changeModify);
-
-        setCreatedAnswer(copyedArray);
-
-        reset();
-    }
 
     return(
         <Wrapper onSubmit={handleSubmit(onSubmit)}>
@@ -154,17 +115,14 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
                 <QuestionForm {...register("question", {value: question, required: "질문을 입력해주세요!"})} placeholder="질문을 입력해주세요." />
 
                 {
-                    answerId.map((item, index) => (
-                        <AnswerComponent key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." value={answer} />
-                    ))
+                    answerId.map((item, index) => { console.log(item); return (
+                        <AnswerComponent boardId={boardId} key={item} register={register} qustionName={item} placeholder="답변을 입력해주세요." value={answer} index={index} setAnswerId={setAnswerId} resetField={resetField} />
+                    )})
                 }
 
                 <MoreItem onClick={onAddAnswer}>More +</MoreItem>
 
-                <ButtonWrap>
-                    <button onClick={onResetBtn}>다시 입력하기</button>
-                    <button>등록</button>
-                </ButtonWrap>
+                <ButtonWrap boardId={boardId} reset={reset} />
             </FormWrap>
         </Wrapper>
     )

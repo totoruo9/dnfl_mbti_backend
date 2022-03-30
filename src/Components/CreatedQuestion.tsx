@@ -1,8 +1,7 @@
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { createdItem, ICreatedItem, questionItem, questionItemSelector } from "../atoms";
-import DropItem from "./DropItem";
+import { createdItem } from "../atoms";
+import atomModify from "../hooks/atomModify";
 
 const Wrapper = styled.div`
     display: flex;
@@ -29,12 +28,15 @@ const Title = styled.h3`
 `;
 
 function CreatedQuestion ({question, answer, boardId}:any) {
-    const setCreatedQuestion = useSetRecoilState(questionItemSelector);
+    const [createdQuestion, setCreatedQuestion] = useRecoilState(createdItem);
 
     const onModify = () => {
-        setCreatedQuestion((prev): any => {
-            return boardId;
-        })
+        atomModify({
+            modify: true,
+            boardId: boardId,
+            atom: createdQuestion,
+            setAtom: setCreatedQuestion
+        });
     }
 
     return (
