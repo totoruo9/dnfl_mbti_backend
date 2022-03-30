@@ -11,7 +11,7 @@ export const lightTheme = {
             white: "#fff"
         },
         main: "#ff4a5b",
-        poin: "#0000ff"
+        point: "teal"
     },
     textSet : {
         color: {

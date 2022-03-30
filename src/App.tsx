@@ -2,7 +2,7 @@ import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import DropBoard from "./Components/DropBoard";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { createdItem, ICreatedItem, questionItem } from "./atoms";
+import { createdItem, ICreatedItem, IQustionData, questionItem } from "./atoms";
 import CreateQuestion from "./Components/CreateQuestion";
 import CreatedQuestion from "./Components/CreatedQuestion";
 
@@ -50,8 +50,6 @@ function App() {
   //   setQuestionWrap(prev => [...prev, createData]);
   //   console.log(questionWrap);
   // }
-
-  console.log(createdAnswer);
 
   return (
     <Wrapper>

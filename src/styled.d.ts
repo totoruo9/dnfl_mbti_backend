@@ -14,7 +14,7 @@ declare module 'styled-components' {
             white: string;
         },
         main: string;
-        poin: string;
+        point: string;
     },
     textSet : {
         color: {

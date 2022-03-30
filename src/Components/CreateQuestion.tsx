@@ -48,7 +48,7 @@ const MoreItem = styled.div`
 
 function CreateQuestion ({question="", answer, boardId=""}:any) {
     const {register, handleSubmit, reset, resetField} = useForm();
-    const [answerId, setAnswerId] = useState(["id_1", "id_2"]);
+    const [answerId, setAnswerId] = useState([`${Math.random().toString(36).substr(2, 16)}`, `${Math.random().toString(36).substr(2, 16)}`]);
     const [createdAnswer, setCreatedAnswer] = useRecoilState(createdItem);
 
     useEffect(() => {
@@ -106,7 +106,8 @@ function CreateQuestion ({question="", answer, boardId=""}:any) {
     };
 
     const onAddAnswer = () => {
-        setAnswerId(prev => [...prev, `id_${prev.length+1}`])
+        const newId =  Math.random().toString(36).substr(2, 16);
+        setAnswerId(prev => [...prev, newId]);
     };
 
     return(

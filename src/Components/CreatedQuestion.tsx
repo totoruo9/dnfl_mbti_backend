@@ -22,10 +22,52 @@ const Board = styled.div`
 const Title = styled.h3`
     font-size: ${props => props.theme.textSet.size.title};
     text-align: center;
-    padding-bottom: ${props => props.theme.paddingSet.pd_12};
+    margin-bottom: ${props => props.theme.paddingSet.pd_20};
     color: ${props => props.theme.textSet.color.gray900};
     font-weight: ${props => props.theme.textSet.weight.extra_bold};
+    height: ${props => props.theme.boxSet.height.md};
+    border-bottom: 1px solid ${props => props.theme.colorSet.blackWhite.gray300};
 `;
+
+const SAnswerWrap = styled.div`
+    border: 1px solid ${props => props.theme.colorSet.blackWhite.gray300};
+    height: ${props => props.theme.boxSet.height.md};
+    border-radius: ${props => props.theme.boxSet.borderRadius};
+    margin-bottom: ${props => props.theme.paddingSet.pd_8};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    strong {
+        display: inline-block;
+        background: ${props => props.theme.colorSet.blackWhite.gray700};
+        color: ${props => props.theme.colorSet.blackWhite.white};
+        padding: ${props => props.theme.paddingSet.pd_4} ${props => props.theme.paddingSet.pd_8};
+        border-radius: ${props => props.theme.boxSet.borderRadius};
+    }
+`;
+
+const ModifyBtn = styled.button`
+    background: ${props => props.theme.colorSet.point};
+    height: ${props => props.theme.boxSet.height.lg};
+    color: ${props => props.theme.colorSet.blackWhite.white};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: 0;
+    margin-top: ${props => props.theme.paddingSet.pd_20};
+`;
+
+interface ICreatedQuestion {
+    question: string;
+    answer: {
+        value: string;
+        id: string;
+        result: string;
+    }[];
+    boardId: string;
+}
 
 function CreatedQuestion ({question, answer, boardId}:any) {
     const [createdQuestion, setCreatedQuestion] = useRecoilState(createdItem);
@@ -44,15 +86,15 @@ function CreatedQuestion ({question, answer, boardId}:any) {
             <Board>
                 <Title>{question}</Title>
                 {
-                    answer.map(({value, result}:any) => {
+                    answer.map(({value, result, boardId}:any) => {
                         return (
-                            <div key={result+value}>
+                            <SAnswerWrap key={boardId}>
                                 <span>{value} <strong>{result}</strong></span>
-                            </div>
+                            </SAnswerWrap>
                         )
                     })
                 }
-                <button onClick={onModify}>수정하기</button>
+                <ModifyBtn onClick={onModify}>수정하기</ModifyBtn>
             </Board>
         </Wrapper>
     );

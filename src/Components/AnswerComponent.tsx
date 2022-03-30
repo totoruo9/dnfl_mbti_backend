@@ -85,13 +85,16 @@ function AnswerComponent({boardId, qustionName, placeholder, register, value=[],
 
         console.log(answerArray);
 
-        await atomModify({
-            boardId: boardId,
-            atom: createdQuestion,
-            setAtom: setCreatedQuestion,
-            modify: true,
-            answerArray
-        });
+        if(boardId !== ""){
+            await atomModify({
+                boardId: boardId,
+                atom: createdQuestion,
+                setAtom: setCreatedQuestion,
+                modify: true,
+                answerArray
+            });
+        }
+        
     };
 
     let getValue;
@@ -104,9 +107,9 @@ function AnswerComponent({boardId, qustionName, placeholder, register, value=[],
             <AnswerWrapper>
                 <AnswerValue {...register(`answer.${qustionName}.value`, {value: getValue?.value, register: "답변을 입력해주세요!"})} placeholder={placeholder} />
                 <AnswerResult {...register(`answer.${qustionName}.result`, {value: getValue?.result})}>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+                    <option value="e">E</option>
+                    <option value="n">N</option>
+                    <option value="f">F</option>
                 </AnswerResult>
             </AnswerWrapper>
             {
