@@ -37,6 +37,18 @@ export const createdItem = atom<IQustionData[]>({
     default: []
 })
 
+export const flowItems = selector({
+    key: "diagramCard",
+    get: ({get}) => {
+        const list = get(createdItem);
+
+        return {
+            questionList: list,
+            flowList: {}
+        };
+    }
+})
+
 
 
 // export const questionItemSelector = selector<IQustionData[]>({

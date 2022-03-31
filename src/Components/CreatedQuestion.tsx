@@ -113,9 +113,9 @@ function CreatedQuestion ({question, answer, boardId}:any) {
             <Board>
                 <Title>{question}</Title>
                 {
-                    answer.map(({value, result, boardId}:any) => {
+                    answer.map(({value, result, id}:any) => {
                         return (
-                            <SAnswerWrap key={boardId}>
+                            <SAnswerWrap key={id}>
                                 <span>{value} <strong>{result}</strong></span>
                             </SAnswerWrap>
                         )
