@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import ReactFlow, { Background, Handle, MiniMap, Position } from "react-flow-renderer";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { createdItem, flowItems } from "../atoms";
@@ -60,13 +62,62 @@ const DropArea = styled.div`
     height: 100%;
 `;
 
+const initialNodes = [
+    {
+        id: 'agaewt12',
+        type: "testNode",
+        data: { label: 123 },
+        position: { x: 250, y: 25 },
+    },
+  
+    {
+        id: 'agewga',
+        // you can also pass a React component as a label
+        data: { label: <div>Default Node</div> },
+        position: { x: 100, y: 125 },
+    },
+    {
+        id: '212gqd',
+        type: 'output',
+        data: { label: 'Output Node' },
+        position: { x: 250, y: 250 },
+    },
+];
+
+const initialEdges = [
+    { id: 'e1-2', source: 'agaewt12', target: 'agewga' },
+    { id: 'e2-3', source: '2', target: '3', animated: true },
+];
+
+const testFn = () => {
+    return (
+        <div style={{height:50, background: "#fff"}}>
+            <Handle type="target" position={Position.Top} />
+            <div>TEST!!!</div>
+            <Handle type="source" position={Position.Bottom} id="a" style={{left:30}} />
+            <Handle type="source" position={Position.Bottom} id="b" style={{left:10}} />
+        </div>
+    )
+}
+
+const nodeTypes = {
+    testNode : testFn
+}
+
+
 function Diagram () {
     const questionCard = useRecoilValue(flowItems);
+    const [nodes, setNodes] = useState(initialNodes);
+    const [edges, setEdges] = useState(initialEdges);
+
+    
+
     console.log(questionCard);
 
     const onDragend = (event:any) => {
         console.log(event);
-    }
+    };
+    
 
     return (
         <>
@@ -109,6 +160,12 @@ function Diagram () {
                         </CardWrap>
                     )}
                 </Droppable>
+                <div style={{height: 300}}>
+                    <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
+                        <MiniMap />
+                        <Background />
+                    </ReactFlow>
+                </div>
             </DragDropContext>
         </>
     )
